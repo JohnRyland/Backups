@@ -16,13 +16,21 @@ then
 fi
 
 . ./config.sh
-  
+
+
 # Copy the required scripts and config files
 mkdir -p ~/.backups
 cd ~/.backups
 rsync -avh ${BACKUP_TARGET_HOST}:${BACKUP_TARGET_BASE}/config ./
 cp config/backup-check.sh ./
 cp config/push-config.sh ./
+
+
+BACKUP_INCLUDES=~/.backups/config/backup-$(hostname -s)-includes.txt
+BACKUP_EXCLUDES=~/.backups/config/backup-$(hostname -s)-excludes.txt
+touch ${BACKUP_INCLUDES}
+touch ${BACKUP_EXCLUDES}
+echo "Please edit ${BACKUP_INCLUDES} and ${BACKUP_EXCLUDES} as appropriate"
 
 
 # Update crontab if it doesn't already include running the script

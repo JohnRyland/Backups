@@ -29,6 +29,7 @@
 # For macOS:
 #   brew install p7zip
 #
+# LOCAL_BACKUPS_DIR=`dirname "$(readlink -f "${0}")"`
 LOCAL_BACKUPS_DIR=~/.backups
 LOCAL_LOGS_DIR=${LOCAL_BACKUPS_DIR}/logs
 LOCAL_CONFIG_DIR=${LOCAL_BACKUPS_DIR}/config
@@ -74,8 +75,16 @@ then
 fi
 
 # Make sure these files exist
-touch ${BACKUP_INCLUDES}
-touch ${BACKUP_EXCLUDES}
+if [ ! -f ${BACKUP_INCLUDES} ]
+then
+  echo "Not yet configured. Please edit ${BACKUP_INCLUDES}"
+  exit 1
+fi
+if [ ! -f ${BACKUP_EXCLUDES} ]
+then
+  echo "Not yet configured. Please edit ${BACKUP_EXCLUDES}"
+  exit 1
+fi
 
 function hourly_backup
 {

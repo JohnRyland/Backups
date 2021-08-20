@@ -22,6 +22,10 @@ Linux based machine as the backup server. Filesystem where backups stored should
 
 Made to work for Linux, MacOS and WSL clients.
 
+Assumes can ssh between client and backup server and that this has been configured to not use passwords
+but rather the backup server's authorized_keys contains the public keys of the clients. Refer to online
+guides such as this https://linuxize.com/post/how-to-setup-passwordless-ssh-login/ to configure this.
+
 
 ## Getting started:
 
