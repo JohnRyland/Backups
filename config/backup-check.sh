@@ -78,13 +78,16 @@ fi
 if [ ! -f ${BACKUP_INCLUDES} ]
 then
   echo "Not yet configured. Please edit ${BACKUP_INCLUDES}"
-  exit 1
+  touch ${BACKUP_INCLUDES}
 fi
 if [ ! -f ${BACKUP_EXCLUDES} ]
 then
-  echo "Not yet configured. Please edit ${BACKUP_EXCLUDES}"
-  exit 1
-fi
+  echo "Not yet configured. Creating a default ${BACKUP_EXCLUDES}"
+  echo "" >> ${BACKUP_EXCLUDES}
+  echo "# Default to exclude everything in the root folder" >> ${BACKUP_EXCLUDES}
+  echo "/*" >> ${BACKUP_EXCLUDES}
+  echo "" >> ${BACKUP_EXCLUDES}
+fi      
 
 function hourly_backup
 {
