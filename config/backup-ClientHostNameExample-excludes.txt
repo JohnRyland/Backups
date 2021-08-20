@@ -1,0 +1,15 @@
+# Default, exclude everything in the root folder
+/*
+
+# Now specific excludes from the home directory
+/home/*
+/home/your-username/.backups
+/home/your-username/.cache
+/home/your-username/.local/share/Steam
+/home/your-username/.steam
+/home/your-username/.thunderbird
+/home/your-username/Backups
+/home/your-username/Downloads
+/home/your-username/Music
+/home/your-username/Videos
+

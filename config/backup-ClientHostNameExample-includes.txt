@@ -1,0 +1,6 @@
+# System backup
+/etc/
+
+# Include home directory
+/home/
+/home/your-username/
