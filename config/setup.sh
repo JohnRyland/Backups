@@ -28,8 +28,6 @@ cp config/push-config.sh ./
 
 BACKUP_INCLUDES=~/.backups/config/backup-$(hostname -s)-includes.txt
 BACKUP_EXCLUDES=~/.backups/config/backup-$(hostname -s)-excludes.txt
-touch ${BACKUP_INCLUDES}
-touch ${BACKUP_EXCLUDES}
 echo "Please edit ${BACKUP_INCLUDES} and ${BACKUP_EXCLUDES} as appropriate"
 
 
