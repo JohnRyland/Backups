@@ -7,6 +7,8 @@ Script based backup system using rsync
 This is based on a few scripts which use some basic UNIX commands to schedule and sync files from
 clients to a backup server. The scheduling is using cron, and the syncing is using rsync.
 
+This is designed for backups on a local area network. 
+
 The script periodically checks to see if it needs to do an hourly, daily or monthly backup depending
 when it last did one of these. The backups are rsynced to the server and stored using hardlinks between
 backup sets to avoid duplicate files.
@@ -25,6 +27,10 @@ Made to work for Linux, MacOS and WSL clients.
 Assumes can ssh between client and backup server and that this has been configured to not use passwords
 but rather the backup server's authorized_keys contains the public keys of the clients. Refer to online
 guides such as this https://linuxize.com/post/how-to-setup-passwordless-ssh-login/ to configure this.
+
+Another assumption is that your backup server and your clients have fixed hostnames and are on the same
+local area network. Potentially this might work over the internet, but it has not been tested or intended
+for this purpose. The idea is that it backs up to a backup server on your LAN.
 
 
 ## Getting started:
@@ -104,4 +110,100 @@ To add backups to another computer, copy the setup.sh script and run it there. T
 default is that it will backup the entire drive, however first thing to do immediately
 is to configure the include and exclude lists in the config files for the given
 machine to only select the most important files.
+
+
+## Configuring the include/exclude files:
+
+These files are read by rsync, so the best explaination is the rsync documentation.
+The files are passed to the --include-from and --exclude-from parameters to rsync.
+Here is the explaination from the rsync man page of these options:
+
+```
+       --exclude=PATTERN
+              This option is a simplified form of the --filter option that defaults to
+              an exclude rule and does not allow the full rule-parsing syntax of normal
+              filter rules.
+
+              See the FILTER RULES section for detailed information on this option.
+
+       --exclude-from=FILE
+              This  option  is  related to the --exclude option, but it specifies a FILE
+              that contains exclude patterns (one per line).  Blank lines in the file and
+              lines starting with ';' or '#' are ignored.  If FILE is -, the list will be
+              read from standard input.
+
+       --include=PATTERN
+              This option is a simplified form of the --filter option that defaults to an
+              include rule and does not allow the full rule-parsing syntax of normal filter
+              rules.
+
+              See the FILTER RULES section for detailed information on this option.
+
+       --include-from=FILE
+              This option is related to the --include option, but it specifies a FILE that
+              contains include patterns (one per line).  Blank lines in the file and lines
+              starting with ';' or '#'  are  ignored.   If FILE is -, the list will be read
+              from standard input.
+```
+
+If both files are empty, then the default will be that nothing is excluded so it will include everything.
+It will backup everything from '/' down. The include rules basically override any exclude rules in this
+case.
+
+So the very first thing you will probably want to do is exclude everything unless you want to do
+entire drive backups which is probably not recommended as there are plenty of files which change frequently
+that don't require backing up or system files that can be easily restored in other ways like a OS
+reinstall. Backing up these files will just delay backing up your important files. So to exclude everything:
+
+edit backup-YourClientHostName-excludes.txt to contain:
+```
+# Default to exclude everything in the root folder
+/*
+```
+
+Now if you want to add your home directory to the backups assuming your home directory is /home/YourUserName
+then if there are other users and we want to exclude their home directories you would need to edit the
+includes and excludes as follows:
+
+edit backup-YourClientHostName-excludes.txt to contain:
+```
+# Default to exclude everything in the root folder
+/*
+
+# Now specifically exclude everything from the home directory
+/home/*
+```
+
+edit backup-YourClientHostName-includes.txt to contain:
+```
+# Include home directory
+/home/
+/home/YourUserName/
+```
+
+This is a bit confusing. It first excludes everything from the root directory, then the include rules override
+this for the home directory. However we don't want to include everything from home, so we exclude everything
+subfolder of /home with the /home/* exclude rule, then we make an exception to this with the include override
+rule to say we do want to include /home/YourUserName/.
+
+We can further refine the excludes, this is an example of excluding specific folders from your home directory.
+
+edit backup-YourClientHostName-excludes.txt to contain:
+```
+# Default to exclude everything in the root folder
+/*
+
+# Now specifically exclude everything from the home directory
+/home/*
+/home/YourUserName/.backups
+/home/YourUserName/.cache
+/home/YourUserName/.backups
+/home/YourUserName/Downloads
+/home/YourUserName/Music
+/home/YourUserName/Old/Files/Saved
+```
+
+More directories could be added to this list. As with the last directory there which is not in the root of the
+home directory, you can add excludes in subfolders without needing to edit the includes folder. We have already
+specified to include everything in /home/YourUserName/, so the excludes are a filter pattern over this.
 
