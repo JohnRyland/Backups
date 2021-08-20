@@ -77,6 +77,23 @@ For macOS:
 ```
 
 
+## Script output:
+
+The script is designed to output most of its output to log files located in ~/.backups/log
+
+However if something goes wrong or needs attention then the script outputs to stdout which
+when the script is run from cron will result in the output being sent as an email.
+
+The default configuration of a linux system will result in these emails being delivered to
+a local mailbox. When running a terminal you may see a notification such as:
+
+```
+You have new mail in /var/mail/YourUserName
+```
+
+These can be read using the `mail` command at the commandline.
+
+
 ## HARDLINKS used to de-duplicate files:
 
 The backups contain hardlinks to avoid duplicate files using additional disk space.
