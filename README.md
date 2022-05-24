@@ -200,7 +200,7 @@ edit backup-YourClientHostName-includes.txt to contain:
 ```
 
 This is a bit confusing. It first excludes everything from the root directory, then the include rules override
-this for the home directory. However we don't want to include everything from home, so we exclude everything
+this for the home directory. However we don't want to include everything from home, so we exclude every
 subfolder of /home with the /home/* exclude rule, then we make an exception to this with the include override
 rule to say we do want to include /home/YourUserName/.
 
